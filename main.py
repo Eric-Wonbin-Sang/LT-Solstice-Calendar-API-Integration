@@ -4,25 +4,25 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 import hashlib
 
-import SolsticePod
+from Objects import SolsticePod, CalendarInfo
 
 from General import Constants
 
 
-def get_password(ip_address):
+def get_password(calendar_info, ip_address):
     # Return empty string if clear-text password is empty
-    if Constants.admin_password is None:
+    if calendar_info.param_dict["Solstice Password"] is None:
         return ''
 
-    stats_url = 'http://{}/api/stats?password={}'.format(ip_address, Constants.admin_password)
+    stats_url = 'http://{}/api/stats?password={}'.format(ip_address, calendar_info.param_dict["Solstice Password"])
     rc = requests.get(stats_url)
     request_config = eval(rc.text)
     version = request_config.get('m_serverVersion')
 
     # Return a SHA1-hashed password string if Pod version < 4.1
     if float(version[0:3]) < 4.1:
-        return hashlib.sha1(Constants.admin_password.encode('utf-8')).hexdigest()
-    return Constants.admin_password
+        return hashlib.sha1(calendar_info.param_dict["Solstice Password"].encode('utf-8')).hexdigest()
+    return calendar_info.param_dict["Solstice Password"]
 
 
 def get_credentials():
@@ -39,10 +39,12 @@ def get_credentials():
 
 def main():
 
+    calendar_info = CalendarInfo.CalendarInfo()
+
     credentials = get_credentials()
     service = build('calendar', 'v3', http=credentials.authorize(Http()))
 
-    for solstice_pod in SolsticePod.get_solstice_pod_list():
+    for solstice_pod in SolsticePod.get_solstice_pod_list(calendar_info=calendar_info):
 
         calendar_item_list = solstice_pod.get_calendar_item_list(service=service)
         for i, calendar_item in enumerate(calendar_item_list):
@@ -54,7 +56,7 @@ def main():
         requests.post(
             'http://{}/api/calendar/set'.format(solstice_pod.ip_address),
             json={
-                'password': get_password(solstice_pod.ip_address),
+                'password': get_password(calendar_info, solstice_pod.ip_address),
                 'calendarItems': calendar_dict_list
             }
         )

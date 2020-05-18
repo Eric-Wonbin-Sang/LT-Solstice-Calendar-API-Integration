@@ -16,11 +16,9 @@ from General import Functions
 
 # Script assumes admin password data is uniform across all Pods
 
-
-admin_password = open(Functions.get_curr_parent_dir("\\API Keys\\Stevens LT Solstice Password.txt")).read()
-
-solstice_pod_cvs_path = 'calendarSettings.csv'
 calendar_api_token_path = Functions.get_curr_parent_dir(
     "\\API Keys\\Stevens LT Solstice token.json")
 google_calendar_credentials_path = Functions.get_curr_parent_dir(
     "\\API Keys\\Google Calendar credentials (eric.wonbin.sang).json")
+
+google_sheets_json = Functions.get_curr_parent_dir("\\API Keys\\Google API - StevensLTBots.json")

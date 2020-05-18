@@ -30,7 +30,7 @@ class CalendarItem:
 
     def get_end(self):
         end = self.event['end'].get('dateTime', self.event['end'].get('date'))
-        if len(self.start) <= 10:  # Account for all day events
+        if len(end) <= 10:  # Account for all day events
             end = end + 'T23:59:00'
         return end
 

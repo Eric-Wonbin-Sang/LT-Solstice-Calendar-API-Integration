@@ -1,10 +1,7 @@
 import datetime
 import time
-import csv
 
-import CalendarItem
-
-from General import Constants
+from Objects import CalendarItem
 
 
 class SolsticePod:
@@ -46,10 +43,11 @@ class SolsticePod:
         return calendar_item_list
 
 
-def get_solstice_pod_list():
+def get_solstice_pod_list(calendar_info):
     solstice_pod_list = []
-    with open(Constants.solstice_pod_cvs_path, 'r+') as solstice_pod_cvs:
-        reader = csv.reader(solstice_pod_cvs, skipinitialspace=True)
-        for ip_address, calendar_id in list(reader)[1:]:
-            solstice_pod_list.append(SolsticePod(ip_address=ip_address.strip(), calendar_id=calendar_id.strip()))
+    for ip_address in calendar_info.ip_id_dict:
+        solstice_pod_list.append(SolsticePod(
+            ip_address=ip_address.strip(),
+            calendar_id=calendar_info.ip_id_dict[ip_address])
+        )
     return solstice_pod_list
